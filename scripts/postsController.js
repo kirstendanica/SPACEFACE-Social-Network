@@ -1,83 +1,63 @@
-
-
-let itemsControllerInstance;
-// Create 'ItemsController' class
 class ItemsController {
-  constructor(currentId = 0) {
+  constructor() {
     this.items = [];
-    this.currentId = currentId;
-    this.loadItemsFromLocalStorage();
+    this.loadItemsFromBackend();
+  }
+
+  async loadItemsFromBackend() {
+    try {
+      const response = await fetch("http://localhost:8080/post");
+      const posts = await response.json();
+      this.items = posts;
+      document.addEventListener("DOMContentLoaded", displayPosts);
+    } catch (error) {
+      console.error("Error loading items:", error);
+    }
   }
 
   addPost(postData) {
     this.addItem(postData.name, postData.description, postData.imageUrl);
   }
-  // Create the addItem method
-  addItem(name, description, imageUrl) {
+
+  async addItem(name, description, imageUrl) {
     const item = {
-      id: this.currentId++,
-      name: name,
-      description: description,
+      title: name,
+      content: description,
       imageUrl: imageUrl,
     };
 
-    // Push item to 'items' property
-    this.items.push(item);
-    this.saveItemsToLocalStorage();
-    this.save(name, description, imageUrl);
-    // Call save function AFTER storing item in local storage
-  }
-
-  // Save items / posts from LocalStorage
-  saveItemsToLocalStorage() {
-    localStorage.setItem("items", JSON.stringify(this.items));
-  }
-
-  // Retrieve items / posts from LocalStorage
-  loadItemsFromLocalStorage() {
-    const storageItems = localStorage.getItem("items");
-    if (storageItems) {
-      const items = JSON.parse(storageItems);
-      for (let i = 0, size = items.length; i < size; i++) {
-        const item = items[i];
-        this.items.push(item);
-        // CurrentId updated to most recent id retrieved from storageItems
-        if (item.id >= this.currentId) {
-          this.currentId = item.id + 1;
-        }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch("http://localhost:8080/post", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        });
+        const createdPost = await response.json();
+        this.items.push(createdPost);
+        resolve();
+      } catch (error) {
+        console.error("Error adding item:", error);
+        reject(error);
       }
-    }
+    });
   }
 
   getPostsData() {
     return this.items;
   }
-
-  save(name, description, imageUrl) {
-    const data = { name, description, imageUrl };
-
-    fetch("http://localhost:8080/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
 }
+
 const itemsController = new ItemsController();
 
 function displayPosts() {
   const posts = itemsController.getPostsData();
   const postsContainer = document.getElementById("dynamic-posts");
   const row = postsContainer.querySelector(".row");
+
+  row.innerHTML = "";
 
   posts.forEach((post) => {
     const col = document.createElement("div");
@@ -90,7 +70,7 @@ function displayPosts() {
     if (post.imageUrl) {
       img.src = post.imageUrl;
     } else {
-      img.src = "./resources/images/sf-logo.png"; // Set default img if imageUrl is undefined
+      img.src = "./resources/images/sf-logo.png";
     }
     img.classList.add("card-img-top");
     img.alt = "image";
@@ -100,11 +80,11 @@ function displayPosts() {
 
     const title = document.createElement("h5");
     title.classList.add("card-title");
-    title.textContent = post.name;
+    title.textContent = post.title;
 
     const text = document.createElement("p");
     text.classList.add("card-text");
-    text.textContent = post.description;
+    text.textContent = post.content;
 
     const readMoreBtn = document.createElement("a");
     readMoreBtn.href = "#";
@@ -115,6 +95,9 @@ function displayPosts() {
     addBtn.href = "#";
     addBtn.classList.add("btn", "btn-outline-light");
     addBtn.textContent = "Add";
+    addBtn.addEventListener("click", () => {
+      window.location.href = "post_form.html";
+    });
 
     cardBody.appendChild(title);
     cardBody.appendChild(text);
@@ -130,11 +113,26 @@ function displayPosts() {
   });
 }
 
-window.addEventListener("load", () => {
-  // Check if 'dynamic-posts' element is present on page
-  if (document.getElementById("dynamic-posts")) {
-    displayPosts();
+document.addEventListener("DOMContentLoaded", () => {
+  const postForm = document.getElementById("post-form");
+  if (postForm) {
+    postForm.addEventListener("submit", submitPostForm);
   }
 });
 
-export default ItemsController;
+async function submitPostForm(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("newItemName").value.trim();
+  const description = document.getElementById("newItemDescription").value.trim();
+  const imageUrl = document.getElementById("newItemImageUrl").value.trim();
+
+  if (name && description) {
+    await itemsController.addItem(name, description, imageUrl);
+    window.location.href = "posts.html";
+    // Move this line outside of if statement
+    displayPosts();
+  } else {
+    alert("Please enter a name and description for the post!");
+  }
+}

@@ -10,6 +10,10 @@
     line-height: 1.5;
     color: #333;
   }
+
+  p {
+    color: #fff;
+  }
   
   header {
     background: #000;
@@ -26,6 +30,10 @@
     list-style: none;
   }
   
+  h3 {
+    color: black;
+  }
+
   nav a {
     color: #fff;
     text-decoration: none;
