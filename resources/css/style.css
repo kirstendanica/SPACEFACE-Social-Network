@@ -188,3 +188,50 @@ textarea.form-control{
   padding-top: 30px;
 }
 
+
+/* ---- Login ---- */
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 56px);
+  background: linear-gradient(135deg, #191920, #949cc8);
+}
+
+.form-wrap {
+  background: #f4f3f2;
+  border-radius: 10px;
+  box-shadow: 0px 0px 40px rgba(0, 0, 0, 0.25);
+}
+
+.form-wrap::before {
+  display: none;
+}
+
+.description {
+  color: #53526e;
+  font-weight: 700;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.form-input {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 5px;
+  padding: 0 15px;
+  font-size: 16px;
+  color: #333333;
+}
+
+.form-input:focus {
+  border-color: #133b55;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  width: 100%;
+}
