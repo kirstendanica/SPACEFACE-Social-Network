@@ -3,12 +3,23 @@
     margin: 0;
     padding: 0;
   }
+
+  font-face {
+    font-family: 'Squid Game';
+    src: url(/resources/fonts/gamesquids.otf)
+    format("opentype");
+  }
   
   body {
     font-family: Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
     color: #333;
+  }
+
+  span {
+    font-family: 'Squid Game', sans-serif;
+    font-size: 24px;
   }
 
   p {
