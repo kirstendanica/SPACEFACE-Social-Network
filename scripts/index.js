@@ -22,7 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const postName = button.parentElement.querySelector(".card-title").textContent;
       const postDescription = button.parentElement.querySelector(".card-text").textContent;
       const postImageUrl = button.parentElement.parentElement.querySelector(".card-img-top").src;
+      const itemId = button.parentElement.parentElement.getAttribute("data-item-id"); // Retrieve the itemId from the post's data attribute
       const postData = {
+        itemId,
         name: postName,
         description: postDescription,
         imageUrl: postImageUrl,
@@ -32,12 +34,4 @@ document.addEventListener("DOMContentLoaded", function () {
       window.location.href = "post_form.html?edit=true";
     }
   }
-
-
-  function addPost(name, description, imageUrl, edit = false) {
-    // Your existing addPost function content
-    itemsController.addPost(name, description, imageUrl);
-  }
-
-  // Remove the duplicate handleButtonClick function
 });

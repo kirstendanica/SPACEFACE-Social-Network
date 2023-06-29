@@ -4,12 +4,19 @@ class ItemsController {
     this.loadItemsFromBackend();
   }
 
+  loadItemsFromLocalStorage() {
+    const postsFromStorage = localStorage.getItem("posts");
+    if (postsFromStorage) {
+      this.posts = JSON.parse(postsFromStorage);
+    }
+  }
+
   async loadItemsFromBackend() {
     try {
       const response = await fetch("http://localhost:8080/post");
       const posts = await response.json();
       this.items = posts;
-      document.addEventListener("DOMContentLoaded", displayPosts);
+      displayPosts();
     } catch (error) {
       console.error("Error loading items:", error);
     }
@@ -99,6 +106,10 @@ function displayPosts() {
       window.location.href = "post_form.html";
     });
 
+    readMoreBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+    });
+
     cardBody.appendChild(title);
     cardBody.appendChild(text);
     cardBody.appendChild(readMoreBtn);
@@ -130,9 +141,11 @@ async function submitPostForm(event) {
   if (name && description) {
     await itemsController.addItem(name, description, imageUrl);
     window.location.href = "posts.html";
-    // Move this line outside of if statement
+    await itemsController.loadItemsFromBackend(); // Reload the posts data from the backend
     displayPosts();
   } else {
     alert("Please enter a name and description for the post!");
   }
 }
+
+export default ItemsController;

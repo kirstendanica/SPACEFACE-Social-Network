@@ -33,7 +33,7 @@ export default class PostFormController {
     const imageUrl = document.getElementById("newItemImageUrl").value;
 
     const actionPromise = this.isEditMode
-      ? this.update(itemId, { name, description, imageUrl })
+      ? this.update(this.itemId, { name, description, imageUrl })
       : this.save(name, description, imageUrl);
 
     actionPromise
@@ -49,7 +49,8 @@ export default class PostFormController {
   loadPostDataForEdit() {
     const editPostData = localStorage.getItem("editPostData");
     if (editPostData) {
-      const { name, description, imageUrl } = JSON.parse(editPostData);
+      const { itemId, name, description, imageUrl } = JSON.parse(editPostData);
+      this.itemId = itemId; // Store itemId as a class property
       document.getElementById("newItemName").value = name;
       document.getElementById("newItemDescription").value = description;
       document.getElementById("newItemImageUrl").value = imageUrl;
